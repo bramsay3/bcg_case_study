@@ -1,7 +1,5 @@
 
-
-
-class answers():
+class Answers():
 
     def __init__(self, answers_txt_file='answers.txt'):
        self.answers = open(answers_txt_file, 'w+')
@@ -16,11 +14,11 @@ class answers():
         return(sorted_df)
 
     # Q1. What is the 15th most flown route? 
-    def answer1(self):
-        self.answers.write('Q1. What is the 15th most flown route?'+'\n'))
+    def answer1(self, year_df, airport_df):
+        self.answers.write('Q1. What is the 15th most flown route?'+'\n')
         FLOWN_RANK = 15
 
-        routes = this.group_sort_agg(year_df,['ORIGIN_AIRPORT_ID','DEST_AIRPORT_ID'],'FL_DATE','count','count')
+        routes = self.group_sort_agg(year_df,['ORIGIN_AIRPORT_ID','DEST_AIRPORT_ID'],'FL_DATE','count','count')
 
         named_routes = routes \
                        .merge(airport_df, how='left', left_on='ORIGIN_AIRPORT_ID', right_on='Code') \
@@ -36,11 +34,11 @@ class answers():
 
 
     # Q2. What carrier has flown the 3rd most number of flights? How many? 
-    def answer2(self):
-        self.answers.write('Q2. What carrier has flown the 3rd most number of flights? How many?'+'\n'))
+    def answer2(self, year_df, carrier_df):
+        self.answers.write('Q2. What carrier has flown the 3rd most number of flights? How many?'+'\n')
         CARRIER_RANK = 3
 
-        carriers = this.group_sort_agg(year_df,'UNIQUE_CARRIER','FL_DATE','count','count')
+        carriers = self.group_sort_agg(year_df,'UNIQUE_CARRIER','FL_DATE','count','count')
 
         named_carriers = carriers \
                        .merge(carrier_df, how='left', left_on='UNIQUE_CARRIER', right_on='Code') \
@@ -50,17 +48,17 @@ class answers():
         q2_answer = ('The 3rd most popular carrier was '
                      '{} with {} flights in 2014'
                      .format(carrier_3.Description,carrier_3['count']))
-        self.answers.write(q2_answer+'\n\n'))
+        self.answers.write(q2_answer+'\n\n')
 
 
     # Q3. What airport has the 10th most delays?
-    def answer3(self):
-        self.answers.write('Q3. What airport has the 10th most delays?'+'\n'))
+    def answer3(self, year_df, airport_df):
+        self.answers.write('Q3. What airport has the 10th most delays?'+'\n')
         DELAYS_RANK = 10
 
         airport_dlys = year_df[year_df['DEP_DELAY_NEW']>0]
 
-        airport_dlys_count = this.group_sort_agg(year_df,'ORIGIN_AIRPORT_ID','DEP_DELAY_NEW','count','count')
+        airport_dlys_count = self.group_sort_agg(year_df,'ORIGIN_AIRPORT_ID','DEP_DELAY_NEW','count','count')
         named_airport_dlys_count = airport_dlys_count \
                                    .merge(airport_df, how='left', left_on='ORIGIN_AIRPORT_ID', right_on='Code') \
                                    .drop('Code',1)
@@ -68,11 +66,11 @@ class answers():
         airport_count_10 = named_airport_dlys_count.loc[DELAYS_RANK-1]
         q3_answer_count = ('The airport with the 10th most delays according to counts was '
                            '{} with {} delays in 2014'
-                           .format(airport_mean_10.Description,airport_mean_10['count']))
+                           .format(airport_count_10.Description,airport_count_10['count']))
         self.answers.write(q3_answer_count+'\n')
 
 
-        airport_dlys_mean = this.group_sort_agg(year_df,'ORIGIN_AIRPORT_ID','DEP_DELAY_NEW','mean','dly_mean')
+        airport_dlys_mean = self.group_sort_agg(year_df,'ORIGIN_AIRPORT_ID','DEP_DELAY_NEW','mean','dly_mean')
         named_airport_dlys_mean = airport_dlys_mean \
                                   .merge(airport_df, how='left', left_on='ORIGIN_AIRPORT_ID', right_on='Code') \
                                   .drop('Code',1)
@@ -85,26 +83,45 @@ class answers():
 
 
     # Q4. What is the second most popular day of the week to travel? Why? 
-    def answer4(self):
-        self.answers.write('Q4. What is the second most popular day of the week to travel? Why? '+'\n'))
+    def answer4(self, year_df):
+        self.answers.write('Q4. What is the second most popular day of the week to travel? Why?'+'\n')
         TRAVEL_RANK = 2
 
 
         year_df['WEEKDAY'] = year_df['FL_DATE'].apply(lambda dt:dt.weekday())
-        travel_day = this.group_sort_agg(year_df,'WEEKDAY','FL_NUM','count','count')
+        travel_day = self.group_sort_agg(year_df,'WEEKDAY','FL_NUM','count','count')
+        #travel_day['AVG_CANCELLED'] = self.group_sort_agg(year_df,'WEEKDAY','CANCELLED','mean','cancelled_avg')['cancelled_avg']
         weekdays = {'num': list(range(7)), 'day_name': ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']}
         weekday_df = pd.DataFrame(weekdays)
         weekday_cnts = travel_day \
                        .merge(weekday_df, how='left', left_on='WEEKDAY', right_on='num') \
                        .drop('num',1)
 
-        popular_day_2 = travel_day.loc[TRAVEL_RANK-1]
+        popular_day_2 = weekday_cnts.loc[TRAVEL_RANK-1]
 
-        q3_answer_count = ('The the 2nd most popular day of the week to travel is '
+        q4_answer = ('The the 2nd most popular day of the week to travel is '
                            '{} with {} trips in 2014'
                            .format(popular_day_2.day_name,popular_day_2['count']))
-        self.answers.write(q3_answer_count+'\n')
+        self.answers.write(q4_answer+'\n\n')
 
+
+    # Q5. What other actionable insights can we gain by leveraging the TranStats dataset?
+    def answer5(self, year_df):
+        self.answers.write('Q5. What other actionable insights can we gain by leveraging the TranStats dataset?'+'\n')
+
+if __name__=='__main__':
+    import csv_io
+    import pandas as pd
+    airport_df = csv_io.load_airport()
+    carrier_df = csv_io.load_carrier()
+    year_df = csv_io.load_monthly()
+
+    ans = Answers()
+    ans.answer1(year_df, airport_df)
+    ans.answer2(year_df, carrier_df)
+    ans.answer3(year_df, airport_df)
+    ans.answer4(year_df)
+    ans.answer5(year_df)
 
 
 
