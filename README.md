@@ -11,12 +11,13 @@ Your client is a well known airline provider across the United States.  They are
 We have provided you with a zip folder with 12 months of airline data along with lookup tables for carriers and airports. Please create a well-structured presentation answering the questions below and providing recommendations. Feel free to use the provided datasets, along with any other data to support your answers and recommendations. 
 
 ## Specific Questions: 
-
   1. What is the 15th most flown route? 
   2. What carrier has flown the 3rd most number of flights? How many? 
   3. What airport has the 10th most delays? 
   4. What is the second most popular day of the week to travel? Why? 
   5. What other actionable insights can we gain by leveraging the TranStats dataset?   
+
+Questions are answered directly in answers.txt and expounded upon in the presentation BCG_case_study.key
 
 ## Website For Additional Data
 

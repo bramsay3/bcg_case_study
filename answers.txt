@@ -1,3 +1,7 @@
+
+
+QUESTIONS
+
 Q1. What is the 15th most flown route?
 The 15th most common route was from Atlanta, GA: Hartsfield-Jackson Atlanta International to New York, NY: LaGuardia with 8503 flights in 2014
 
@@ -8,7 +12,5 @@ Q3. What airport has the 10th most delays?
 The airport with the 10th most delays according to counts was Charlotte, NC: Charlotte Douglas International with 110396 delays in 2014
 The airport with the 10th most delays according to the mean was Arcata/Eureka, CA: Arcata with a mean delay of 21.18045112781955 minutes
 
-Q4. What is the second most popular day of the week to travel? Why?
+Q4. What is the second most popular day of the week to travel?
 The the 2nd most popular day of the week to travel is Wednesday with 864033 trips in 2014
-
-Q5. What other actionable insights can we gain by leveraging the TranStats dataset?

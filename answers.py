@@ -1,8 +1,11 @@
 
+import pandas as pd
+
 class Answers():
 
     def __init__(self, answers_txt_file='answers.txt'):
        self.answers = open(answers_txt_file, 'w+')
+       self.answers.write("\n\nQUESTIONS\n\n")
 
     def group_sort_agg(self, df, groupby_col_list, agg_col, agg_func, col_name, asc=False):
         sorted_df = df \
@@ -31,6 +34,7 @@ class Answers():
                      'from {} to {} with {} flights in 2014'
                      .format(route_15.Description_start,route_15.Description_end,route_15['count']))
         self.answers.write(q1_answer+'\n\n')
+        return(named_routes)
 
 
     # Q2. What carrier has flown the 3rd most number of flights? How many? 
@@ -49,6 +53,7 @@ class Answers():
                      '{} with {} flights in 2014'
                      .format(carrier_3.Description,carrier_3['count']))
         self.answers.write(q2_answer+'\n\n')
+        return(named_carriers)
 
 
     # Q3. What airport has the 10th most delays?
@@ -81,10 +86,15 @@ class Answers():
                           .format(airport_mean_10.Description,airport_mean_10['dly_mean']))
         self.answers.write(q3_answer_mean+'\n\n')
 
+        airport_dly = airport_dlys_count.merge(named_airport_dlys_mean.drop('Description',1), on='ORIGIN_AIRPORT_ID').drop('ORIGIN_AIRPORT_ID',1)
+
+
+        return(named_airport_dlys_count,named_airport_dlys_mean)
+
 
     # Q4. What is the second most popular day of the week to travel? Why? 
     def answer4(self, year_df):
-        self.answers.write('Q4. What is the second most popular day of the week to travel? Why?'+'\n')
+        self.answers.write('Q4. What is the second most popular day of the week to travel?'+'\n')
         TRAVEL_RANK = 2
 
 
@@ -103,15 +113,10 @@ class Answers():
                            '{} with {} trips in 2014'
                            .format(popular_day_2.day_name,popular_day_2['count']))
         self.answers.write(q4_answer+'\n\n')
-
-
-    # Q5. What other actionable insights can we gain by leveraging the TranStats dataset?
-    def answer5(self, year_df):
-        self.answers.write('Q5. What other actionable insights can we gain by leveraging the TranStats dataset?'+'\n')
+        return(weekday_cnts)
 
 if __name__=='__main__':
     import csv_io
-    import pandas as pd
     airport_df = csv_io.load_airport()
     carrier_df = csv_io.load_carrier()
     year_df = csv_io.load_monthly()
@@ -121,7 +126,7 @@ if __name__=='__main__':
     ans.answer2(year_df, carrier_df)
     ans.answer3(year_df, airport_df)
     ans.answer4(year_df)
-    ans.answer5(year_df)
+    ans.answers.close()
 
 
 
